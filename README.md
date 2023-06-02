@@ -17,3 +17,5 @@ In the menu for states the label can be changed. Initial and final states can al
 ![Screenshot from 2023-06-02 16-30-33](https://github.com/qwertzuiopy/LibFlaps/assets/89102209/70cd7980-8407-4183-ae10-95fe499e577d)
 
 In the transition menu there is a list of transitions with their input required for the transition to occur. Following is the first element of the stack, a dropdown for the action on the stack (and the text to be pushed onto the stack).
+
+These machines can be saved an opened as simple JSON files.
