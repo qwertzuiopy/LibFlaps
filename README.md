@@ -19,3 +19,6 @@ In the menu for states the label can be changed. Initial and final states can al
 In the transition menu there is a list of transitions with their input required for the transition to occur. Following is the first element of the stack, a dropdown for the action on the stack (and the text to be pushed onto the stack).
 
 These machines can be saved an opened as simple JSON files.
+
+Installing
+This application can be easily installed via [flatpak](https://flatpak.org/setup/), just download the [de.egwagi.Libflaps.flatpak](https://github.com/qwertzuiopy/LibFlaps/blob/main/de.egwagi.Libflaps.flatpak) file, and install it using your software center.
