@@ -3,7 +3,7 @@
 LibFlaps is a simple tool to create Finite-state machines and Pushdown automatons.
 Finite-state machines and Pushdown automatons are concepts of Theoretical computer science used to analyze regular and context-free grammars.
 
-![Screenshot from 2023-06-02 16-27-13](https://github.com/qwertzuiopy/LibFlaps/assets/89102209/935519e6-df31-4dc1-a688-4b3dc9360eed)
+![Screenshot from 2023-06-02 16-31-29](https://github.com/qwertzuiopy/LibFlaps/assets/89102209/3d0bcfc5-2067-4f73-89a1-3e1bf5e6d46c)
 
 In LibFlaps states can be created using the left mouse button. Transitions are created by holding shift and draging from one state to another. A right click removes states or transitions.
 
