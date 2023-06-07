@@ -7,3 +7,5 @@ src/lib_io.py
 src/lib_menu.py
 src/library.py
 src/test.py
+src/lib_toolbar.py
+src/libflaps_toolbar.ui
