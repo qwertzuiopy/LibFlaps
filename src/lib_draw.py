@@ -84,14 +84,17 @@ def arrow_label(window, ctx, position, arrow):
                 index*window.transform.scale*10+window.transform.scale*2)
         if library.sign(offset.rotated(arrow.end.position.minus(arrow.start.position).angle()).y) != library.sign(offset.y):
             offset.y = -offset.y
-        text = str(t.label)+", "+str(t.stack)+"; "
-        match t.stack_op:
-            case 0:
-                text += "push("+str(t.stack_push)+")"
-            case 1:
-                text += "pop()"
-            case 2:
-                text += "nop"
+        if window.type == "pda":
+            text = str(t.label)+", "+str(t.stack)+"; "
+            match t.stack_op:
+                case 0:
+                    text += "push("+str(t.stack_push)+")"
+                case 1:
+                    text += "pop()"
+                case 2:
+                    text += "nop"
+        else:
+            text = str(t.label)
         (x, y, width, height, dx, dy) = ctx.text_extents(text)
 
         set_source_bg(window, ctx)

@@ -34,6 +34,7 @@ libflaps_sources = [
   'lib_menu.py',
   'library.py',
   'test.py',
+  'lib_toolbar.py'
 ]
 
 install_data(libflaps_sources, install_dir: moduledir)

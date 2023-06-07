@@ -23,7 +23,7 @@ import math
 from . import lib_io
 from . import lib_draw
 
-from .lib_menu import ArrowMenu, StateMenu
+from .lib_menu import PDAArrowMenu, PDAStateMenu, FSMArrowMenu, FSMStateMenu
 
 from .library import Transform, Vec2, State, Arrow
 from .test import Test
@@ -32,7 +32,7 @@ gi.require_version('Gdk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gdk, Adw, Gio, GLib
 
-
+from .lib_toolbar import HeaderBar
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -41,38 +41,17 @@ class MainWindow(Gtk.ApplicationWindow):
 
         GLib.set_application_name("Lib Flaps")
 
-        self.header = Gtk.HeaderBar()
+        self.header = HeaderBar(self)
         self.set_titlebar(self.header)
-        self.set_title("LibFlaps")
+        #self.set_title("LibFlaps")
         self.set_default_size(800, 800)
 
-        menu = Gio.Menu.new()
-
-        center_action = Gio.SimpleAction.new("center", None)
-        center_action.connect("activate", self.center)
-        self.add_action(center_action)
-        menu.append("Center", "win.center")
-
-        about_action = Gio.SimpleAction.new("about", None)
-        about_action.connect("activate", self.about)
-        self.add_action(about_action)
-        menu.append("About LibFlaps", "win.about")
-
-        self.popover = Gtk.PopoverMenu()
-        self.popover.set_menu_model(menu)
-
-        self.hamburger = Gtk.MenuButton()
-        self.hamburger.set_popover(self.popover)
-        self.hamburger.set_icon_name("open-menu-symbolic")  # Give it a nice icon
-        self.header.pack_end(self.hamburger)
-
-
         self.open_button = Gtk.Button(label="Open")
-        self.header.pack_start(self.open_button)
+        # self.header.pack_start(self.open_button)
         self.open_button.connect("clicked", self.show_open_dialog)
 
         self.save_button = Gtk.Button(label="Save")
-        self.header.pack_start(self.save_button)
+        # self.header.pack_start(self.save_button)
         self.save_button.connect("clicked", self.show_save_dialog)
 
 
@@ -86,13 +65,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.fixed = Gtk.Fixed()
         self.overlay.add_overlay(self.fixed)
 
-        self.arrow_menu = ArrowMenu()
+        self.arrow_menu = FSMArrowMenu()
         self.fixed.put(self.arrow_menu, 100, 100)
         self.arrow_menu.set_visible(False)
 
-        self.state_menu = StateMenu()
+        self.state_menu = FSMStateMenu()
         self.fixed.put(self.state_menu, 100, 100)
         self.fixed.set_visible(False)
+
+        self.type = "fsm"
 
 
         self.canvas = Gtk.DrawingArea()
@@ -182,7 +163,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
 
     def key_press(self, event, keyval, keycode, state):
-        if keyval == Gdk.KEY_q and state & Gdk.ModifierType.CONTROL_MASK:   # Add Gdk to your imports. i.e. from gi import Gdk
+        if keyval == Gdk.KEY_q and state & Gdk.ModifierType.CONTROL_MASK:
             self.close()
         if keyval == Gdk.KEY_Control_L:
             self.control = True
@@ -239,9 +220,12 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.right_down = True
                 state = self.get_state(pos)
                 if state:
-                    for arrow in self.arrows:
-                        if arrow.start == state or arrow.end == state:
-                            self.arrows.remove(arrow)
+                    i = 0
+                    while i < len(self.arrows):
+                        if self.arrows[i].start == state or self.arrows[i].end == state:
+                            self.arrows.remove(self.arrows[i])
+                        else:
+                            i += 1
                     self.states.remove(state)
                 arrow = self.get_arrow(pos)
                 if arrow:
@@ -355,32 +339,58 @@ class MainWindow(Gtk.ApplicationWindow):
     def draw(self, area, ctx, w, h, _):
         lib_draw.draw(self, area, ctx, w, h, _)
 
-    def show_open_dialog(self, button):
+    def show_open_dialog(self):
         lib_io.open(self)
-    def show_save_dialog(self, button):
+    def show_save_dialog(self):
         lib_io.save(self)
 
 
-    def about(self, action, param):
+    def about(self):
         dialog = Adw.AboutWindow(transient_for=self)
         dialog.set_application_name=("App name")
-        dialog.set_version("1.0")
+        dialog.set_version("1.1")
         dialog.set_developer_name("Michael Hammer")
         dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0))
         dialog.set_comments("An application for creating, editing and viewing Finite-state machines and Pushdown automatons.")
         dialog.set_website("https://github.com/qwertzuiopy/LibFlaps")
         dialog.set_issue_url("https://github.com/qwertzuiopy/LibFlaps")
-        dialog.add_credit_section("Contributors", ["Michael_Hammer egwagi.de/Transistor"])
+        #dialog.add_credit_section("Contributors", ["Michael_Hammer egwagi.de/Transistor"])
         # dialog.set_translator_credits("Name1 url")
         dialog.set_copyright("© 2022 Michael Hammer")
         dialog.set_developers(["Michael Hammer"])
         dialog.show()
 
-    def center(self, _action, _param):
+    def center(self):
+        current = self.transform.dims.divided(2).to_world(self.transform)
+        self.transform.offset = self.transform.offset.plus(current.minus(self.states[0].position))
+
+        org_middle =  Vec2(self.transform.dims.x / 2, self.transform.dims.y / 2).to_world(self.transform)
         self.transform.scale = 3
-        current = self.states[0].position.to_screen(self.transform)
-        self.transform.offset = self.transform.offset.plus(self.transform.dims.divided(2).minus(current)).divided(self.transform.scale)
+        new_middle =  Vec2(self.transform.dims.x / 2, self.transform.dims.y / 2).to_world(self.transform)
+        self.transform.offset = self.transform.offset.plus(new_middle.minus(org_middle))
+
         self.canvas.queue_draw()
+
+    def switch_type(self, w):
+        self.type = w
+        self.fixed.remove(self.arrow_menu)
+        self.fixed.remove(self.state_menu)
+        match self.type:
+            case "fsm":
+                self.arrow_menu = FSMArrowMenu()
+                self.fixed.put(self.arrow_menu, 100, 100)
+                self.arrow_menu.set_visible(False)
+                self.state_menu = FSMStateMenu()
+                self.fixed.put(self.state_menu, 100, 100)
+                self.fixed.set_visible(False)
+            case "pda":
+                self.arrow_menu = PDAArrowMenu()
+                self.fixed.put(self.arrow_menu, 100, 100)
+                self.arrow_menu.set_visible(False)
+                self.state_menu = PDAStateMenu()
+                self.fixed.put(self.state_menu, 100, 100)
+                self.fixed.set_visible(False)
+
 
 
 class PreviewArrow:
@@ -404,3 +414,4 @@ class LibFlaps(Adw.Application):
 def main(version):
     app = LibFlaps(application_id="de.egwagi.LibFlaps")
     app.run(sys.argv)
+

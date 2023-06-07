@@ -43,5 +43,4 @@ if __name__ == '__main__':
     resource._register()
 
     from libflaps import main
-    from libflaps import lib_io
     sys.exit(main.main(VERSION))

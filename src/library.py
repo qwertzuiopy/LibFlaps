@@ -1,11 +1,19 @@
 import sys
 import gi
 import math
+from enum import Enum
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Gdk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gdk, Adw, Gio, GLib
+
+
+class MachineType(Enum):
+    FSM = 1
+    PDA = 2
+    TM = 3
+
 
 class Transform:
     def __init__(self):
