@@ -1,0 +1,12 @@
+data/de.egwagi.Libflaps.desktop.in
+data/de.egwagi.Libflaps.appdata.xml.in
+data/de.egwagi.Libflaps.gschema.xml
+src/main.py
+src/lib_draw.py
+src/lib_io.py
+src/lib_menu.py
+src/library.py
+src/test.py
+src/lib_toolbar.py
+src/libflaps_toolbar.ui
+src/libflaps_test_window.ui

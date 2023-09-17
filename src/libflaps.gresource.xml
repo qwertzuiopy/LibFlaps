@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/de/egwagi/Libflaps">
+    <file preprocess="xml-stripblanks">libflaps_toolbar.ui</file>
+    <file preprocess="xml-stripblanks">libflaps_test_window.ui</file>
+
+  </gresource>
+</gresources>
+

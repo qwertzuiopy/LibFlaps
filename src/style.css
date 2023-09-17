@@ -1,0 +1,53 @@
+/*.context-tile {
+	border: 1px solid @card_shade_color;
+	background-color: transparent;
+	border-radius: 0;
+	padding: 24px 12px 21px 12px;
+	outline-offset: 5px;
+	transition-property: outline, outline-offset, background-image;
+	border-bottom: none;
+	border-right: none;
+	color: #FF0000;
+}
+
+app-context-bar .context-tile:hover {
+	background-image: image(alpha(currentColor, .03));
+}
+
+app-context-bar .context-tile.keyboard-activating,
+app-context-bar .context-tile:active {
+	background-image: image(alpha(currentColor, .08));
+}
+
+app-context-bar .context-tile:focus:focus-visible {
+	outline-offset: -1px;
+}
+
+app-context-bar box:first-child .context-tile:first-child {
+	border-top-left-radius: 12px;
+}
+
+app-context-bar.horizontal box:last-child .context-tile:last-child,
+app-context-bar.vertical box:first-child .context-tile:last-child {
+	border-top-right-radius: 12px;
+}
+
+app-context-bar.horizontal box:first-child .context-tile:first-child,
+app-context-bar.vertical box:last-child .context-tile:first-child {
+	border-bottom-left-radius: 12px;
+}
+
+app-context-bar box:last-child .context-tile:last-child {
+	border-bottom-right-radius: 12px;
+}
+
+app-context-bar.horizontal box:first-child .context-tile:first-child,
+app-context-bar.vertical .context-tile:first-child {
+	border-left: none;
+}
+
+app-context-bar.horizontal .context-tile,
+app-context-bar.vertical box:first-child .context-tile {
+	border-top: none;
+}
+*/

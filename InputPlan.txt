@@ -1,0 +1,29 @@
+========== Input Plan ===========
+mousedown:
+	- set position
+	- set moved to false
+	- set self.left / right / middle_down
+	left:
+	- check for state / arrow and set active + initial position
+	- if shift and state initiate preview arrow
+	- if there is nothing, add a state
+	right:
+	- check for state / arrow and remove them
+	middle:
+	- check for state and set initial / final based on shift
+	
+	- queue_draw
+mousemove:
+	- set position
+	- set moved to true
+	- set hovered
+	- if middle click: move view
+	- if active state: move state
+	- if preview arrow: set preview arrow
+	- queue_draw
+
+mouseup: Done
+	- set position
+	- set self.left / middle / right_down
+	- if not moved and active: open menu
+	- queue_draw

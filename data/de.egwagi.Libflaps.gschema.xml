@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="libflaps">
+	<schema id="de.egwagi.Libflaps" path="/de/egwagi/Libflaps/">
+	  <file preprocess="xml-stripblanks">arrow1-right-symbolic.svg</file>
+	</schema>
+</schemalist>
