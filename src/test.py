@@ -17,16 +17,71 @@ class TestWindow(Adw.Bin):
     entry = Gtk.Template.Child("entry")
     start = Gtk.Template.Child("start")
     close = Gtk.Template.Child("close")
+    progress = Gtk.Template.Child("progress")
+    path = Gtk.Template.Child("path")
+
+    next = Gtk.Template.Child("next")
+    previous = Gtk.Template.Child("previous")
+
+    row = Gtk.Template.Child("row")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.obj = None
         self.start.connect("clicked", self.test)
         self.content_objs = []
+        self.paths = []
+        self.current_path = 0
+        self.word = ""
+
+        self.next.connect("clicked", self.next_path)
+        self.previous.connect("clicked", self.previous_path)
+
+    def next_path(self, _):
+        self.current_path += 1
+        if self.current_path >= len(self.paths):
+            self.current_path = len(self.paths)-1
+        if self.current_path >= len(self.paths)-1:
+            self.next.set_sensitive(False)
+        else:
+            self.next.set_sensitive(True)
+        if self.current_path < 0:
+            self.current_path = 0
+        if self.current_path <= 0:
+            self.previous.set_sensitive(False)
+        else:
+            self.previous.set_sensitive(True)
+
+
+        self.display_path(self.current_path)
+    def previous_path(self, _):
+        self.current_path -= 1
+        if self.current_path >= len(self.paths):
+            self.current_path = len(self.paths)-1
+        if self.current_path >= len(self.paths)-1:
+            self.next.set_sensitive(False)
+        else:
+            self.next.set_sensitive(True)
+        if self.current_path < 0:
+            self.current_path = 0
+        if self.current_path <= 0:
+            self.previous.set_sensitive(False)
+        else:
+            self.previous.set_sensitive(True)
+        self.display_path(self.current_path)
+
     def start_test(self, obj):
         self.obj = obj
+    def hide_progress(self, _):
+        self.progress.set_fraction(0)
     def test(self, _):
+        target_timed = Adw.PropertyAnimationTarget.new(self.progress, "fraction")
+        animation_timed = Adw.TimedAnimation.new(self.progress, 0, 1, 1500, target_timed)
+        animation_timed.connect("done", self.hide_progress)
+        animation_timed.play()
+
         word = self.entry.get_text()
+
         p = []
         for i in self.obj.states:
             if i.initial:
@@ -45,21 +100,32 @@ class TestWindow(Adw.Bin):
                 fins[-1].insert(0, a.state)
                 a = a.last_point
 
+
+        self.paths = fins
+        self.current_path = 0
+        self.word = word
+        if len(self.paths) > 0:
+            self.display_path(0)
+
+        if self.contains_finish(p):
+            self.row.set_css_classes(["success", "linked"])
+            self.entry.set_icon_from_icon_name(1, "object-select-symbolic")
+        else:
+            self.row.set_css_classes(["error", "linked"])
+            self.entry.set_icon_from_icon_name(1, "dialog-error-symbolic")
+        self.start.set_icon_name("view-refresh-symbolic")
+        self.path.set_reveal_child(True)
+    def display_path(self, index):
         for i in self.content_objs:
             self.content.remove(i)
-        for i in range(0, len(fins[0])):
-            s = TestState(fins[0][i])
+        for i in range(0, len(self.paths[index])):
+            s = TestState(self.paths[index][i], self.obj)
             self.content.append(s)
             self.content_objs.append(s)
-            if i < len(fins[0])-1:
-                a = TestArrow(word[i])
+            if i < len(self.paths[index])-1:
+                a = TestArrow(self.word[i])
                 self.content.append(a)
                 self.content_objs.append(a)
-        if self.contains_finish(p):
-            self.set_css_classes(["success"])
-        else:
-            self.set_css_classes(["error"])
-        self.start.set_icon_name("view-refresh-symbolic")
     def contains_finish(self, p):
         for point in p:
             if point.state.final:
@@ -113,15 +179,25 @@ class Point():
 
 class TestState(Gtk.Button):
     __gtype_name__ = 'TestState'
-    def __init__(self, state, **kwargs):
+    def __init__(self, state, obj, **kwargs):
         super().__init__(**kwargs)
+        self.set_halign(Gtk.Align.CENTER)
         self.set_label(state.label)
         self.add_css_class("pill")
+        self.set_valign(Gtk.Align.CENTER)
+        self.obj = obj
+        self.state = state
+        self.connect("clicked", self.highlight)
+    def highlight(self, _):
+        for i in self.obj.states:
+            i.test_active = False
+        self.state.test_active = True
 
 class TestArrow(Gtk.Box):
     __gtype_name__ = 'TestArrow'
     def __init__(self, char, **kwargs):
         super().__init__(**kwargs)
+        self.set_halign(Gtk.Align.CENTER)
         self.append(Gtk.Image.new_from_icon_name("value-decrease-symbolic"))
         self.append(Gtk.Label.new(char))
         self.append(Gtk.Image.new_from_icon_name("go-next-symbolic"))

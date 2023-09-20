@@ -6,17 +6,22 @@
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>
-        <property name="margin-start">10</property>
-        <property name="margin-end">10</property>
-        <property name="margin-top">10</property>
-        <property name="margin-bottom">10</property>
         <property name="spacing">10</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkProgressBar" id="progress">
+            <property name="fraction">0</property>
+            <style>
+              <class name="osd"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="row">
             <property name="halign">3</property>
             <style>
               <class name="linked"/>
             </style>
+
             <child>
               <object class="GtkEntry" id="entry"/>
             </child>
@@ -34,9 +39,41 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="content">
-            <property name="spacing">10</property>
+          <object class="GtkRevealer" id="path">
+            <child>
+              <object class="GtkBox">
+                <property name="halign">3</property>
+                <child>
+                  <object class="GtkBox">
+                    <style>
+                      <class name="linked"/>
+                    </style>
+                    <property name="orientation">1</property>
+                    <property name="margin-end">10</property>
+                    <child>
+                      <object class="GtkButton" id="next">
+                        <property name="icon-name">go-up-symbolic</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="previous">
+                        <property name="icon-name">go-down-symbolic</property>
+                      </object>
+                    </child>
+                    </object>
+                </child>
+                <child>
+                  <object class="GtkBox" id="content">
+                    <property name="spacing">10</property>
+                    <property name="halign">3</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
+        </child>
+        <child>
+          <object class="GtkSeparator"/>
         </child>
       </object>
     </child>

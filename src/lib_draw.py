@@ -165,7 +165,7 @@ def set_source_highlight(window, ctx):
 def draw_state(window, ctx, state):
     set_source_fg(window, ctx)
 
-    if window.hovered_element == state:
+    if window.hovered_element == state or state.test_active:
         set_source_highlight(window, ctx)
 
     radius = window.radius*window.transform.scale

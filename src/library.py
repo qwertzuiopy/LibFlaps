@@ -83,6 +83,7 @@ class State:
         self.type = "state"
         self.initial = False
         self.final = False
+        self.test_active = False
     def copy(self):
         s = State()
         s.position = self.position.copy()
@@ -90,6 +91,7 @@ class State:
         s.type = self.type
         s.initial = self.initial
         s.final = self.final
+        s.test_active = self.test_active
         return s
 
 
